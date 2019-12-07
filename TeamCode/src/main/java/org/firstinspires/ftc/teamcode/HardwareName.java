@@ -1,16 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-//import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-//import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import static java.lang.Thread.sleep;
+
+
+
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class HardwareName {
@@ -25,6 +23,7 @@ public class HardwareName {
     public Servo leftGrabber;
     public Servo rightGrabber;
     public Servo pusher;
+    public Servo blockGrabber;
     public Orientation angle;
 
     private DcMotor.RunMode initialMode;
@@ -49,6 +48,7 @@ public class HardwareName {
         leftGrabber = map.servo.get("leftGrabber");
         rightGrabber = map.servo.get("rightGrabber");
         pusher = map.servo.get("pusher");
+        blockGrabber = map.servo.get("blockGrabber");
 
         //Encoders
         bottomLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -182,30 +182,12 @@ public class HardwareName {
         topRightDrive.setPower(power - turn);
     }
 
-    public void betterTurn(float turn) {
-        if (turn < 0) {
-            topLeftDrive.setPower(0);
-            bottomLeftDrive.setPower(0);
-        } else if (turn > 0) {
-            topRightDrive.setPower(0);
-            bottomRightDrive.setPower(0);
-        } else {
-            topLeftDrive.setPower(1);
-            bottomLeftDrive.setPower(1);
-            topRightDrive.setPower(1);
-            bottomRightDrive.setPower(1);
-        }
-    }
 
     public void intake(float power) {
         leftIntake.setPower(power);
         rightIntake.setPower(power);
     }
 
-    public void release(float power) {
-        leftIntake.setPower(-power);
-        rightIntake.setPower(-power);
-    }
 
     public void rotateArm(double power) {
         armRotate.setPower(power);
@@ -215,6 +197,74 @@ public class HardwareName {
         armLinear.setPower(power);
     }
 
+    public void leftGrabberIn() {
+        leftGrabber.setPosition(1);
+    }
+
+    public void leftGrabberOut() {
+        leftGrabber.setPosition(-1);
+    }
+
+    public void rightGrabberIn() {
+        rightGrabber.setPosition(1);
+    }
+
+    public void rightGrabberOut() {
+        rightGrabber.setPosition(-1);
+    }
+
+    public void releaseBlockIntake(double power) {
+        pusher.setPosition(180);
+        rightIntake.setPower(-power);
+        leftIntake.setPower(-power);
+        try {
+            sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        pusher.setPosition(0);
+        rightIntake.setPower(0);
+        leftIntake.setPower(0);
+    }
+
+    public void grabBlock() {
+        blockGrabber.setPosition(90);
+    }
+
+    public void releaseBlock() {
+        blockGrabber.setPosition(0);
+    }
+
+    public void rotateArmOver(double power) {
+        armRotate.setPower(power);
+        try {
+            sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        armRotate.setPower(0);
+        armLinear.setPower(power);
+        try {
+            sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        armLinear.setPower(0);
+        armRotate.setPower(power);
+        try {
+            sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        armRotate.setPower(0);
+        armLinear.setPower(-power);
+        try {
+            sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        armLinear.setPower(0);
+    }
 
 }
 

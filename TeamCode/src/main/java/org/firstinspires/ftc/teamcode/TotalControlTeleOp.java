@@ -12,6 +12,7 @@ public class TotalControlTeleOp extends OpMode {
     double topRight = 0;
     double bottomLeft = 0;
     double bottomRight = 0;
+    boolean blockInside = false;
 
     @Override
     public void init() {
@@ -49,20 +50,48 @@ public class TotalControlTeleOp extends OpMode {
             robot.stopMove();
         }
 
-        if (gamepad2.right_trigger != 0) {
-            robot.intake(gamepad2.right_trigger);
-        } else if (gamepad2.left_trigger != 0) {
-            robot.release(gamepad2.left_trigger);
-        } else if (gamepad2.right_bumper) {
+        if (gamepad1.a){
+            robot.intake(1);
+        } else if (gamepad1.x){
+            robot.releaseBlockIntake(1);
+        }
+
+        if (gamepad2.right_bumper) {
             robot.rotateArm(0.5);
         } else if (gamepad2.left_bumper) {
             robot.rotateArm(-0.5);
-        } else if (gamepad2.left_stick_y < 0) {
-            robot.slideArm(-(gamepad2.left_stick_y));
-        } else if (gamepad2.left_stick_y > 0) {
-            robot.slideArm(gamepad2.left_stick_y);
+        } else if (gamepad2.right_trigger != 0) {
+            robot.slideArm(-(gamepad2.right_trigger));
+        } else if (gamepad2.left_trigger != 0) {
+            robot.slideArm(gamepad2.left_trigger);
+        } else if (gamepad2.x){
+            robot.rotateArmOver(0.5);
         } else {
-            robot.stopArm();
+        robot.stopArm();
+        }
+
+        if(gamepad2.a){
+            if (blockInside){
+                robot.releaseBlock();
+            } else {
+                robot.grabBlock();
+            }
+
+        }
+
+        if (gamepad2.left_stick_x > 0){
+            robot.leftGrabberIn();
+        } else if (gamepad2.left_stick_x< 0){
+            robot.leftGrabberOut();
+        }
+
+        if (gamepad2.right_stick_x > 0){
+            robot.rightGrabberIn();
+        } else if (gamepad2.left_stick_x< 0){
+            robot.rightGrabberOut();
+        }
+
+
 
             telemetry.addData("Top Left Drive", robot.topLeftDrive.getPower());
             telemetry.addData("Bottom Left Drive", robot.bottomLeftDrive.getPower());
@@ -75,4 +104,3 @@ public class TotalControlTeleOp extends OpMode {
 
     }
 
-}
